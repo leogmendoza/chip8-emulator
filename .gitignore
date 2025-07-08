@@ -1,0 +1,23 @@
+# Build files
+/build/
+*.o
+*.out
+*.elf
+*.bin
+*.map
+
+# SDL cache
+*.log
+
+# VS Code
+.vscode/
+
+# STM32CubeIDE
+*.ioc
+Debug/
+Release/
+*.launch
+*.uvoptx
+*.uvprojx
+*.cproject
+*.project
