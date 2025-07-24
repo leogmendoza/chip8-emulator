@@ -2,8 +2,11 @@
 
 #include <stdint.h>
 
+#include "memory.h"
+#include "rom.h"
+
 #define REGISTER_COUNT 16
-#define MEMORY_SIZE_BYTES 4096
+#define MEMORY_SIZE 4096
 #define STACK_DEPTH 16
 #define DISPLAY_HEIGHT 32
 #define DISPLAY_WIDTH 64
@@ -17,7 +20,7 @@ typedef struct {
     uint16_t pc;                    // Program Counter
 
     //  Memory
-    uint8_t memory[MEMORY_SIZE_BYTES];
+    uint8_t memory[MEMORY_SIZE];
 
     // Stack
     uint16_t stack[STACK_DEPTH];
@@ -33,3 +36,6 @@ typedef struct {
     // Input
     uint8_t keypad[INPUT_KEY_COUNT];
 } Chip8;
+
+void chip8_init(Chip8* chip8);
+void chip8_load_rom(Chip8* chip8);
