@@ -1,1 +1,3 @@
-Plan to start this weekend, just needa do a lickle more research😁
+Currently setting up memory and ROM stuff😁
+
+After that, it's implementing the 35 instructions!😨
