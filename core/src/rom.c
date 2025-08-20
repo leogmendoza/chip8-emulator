@@ -37,8 +37,7 @@ void rom_init(Chip8* chip8) {
 /* Copy font set into reserved section for characters */
 void rom_load_font(Chip8* chip8) {
     for (size_t i = 0; i < FONT_SET_SIZE; ++i) {
-
-        chip8->memory[FONT_SET_START_ADDRESS + i] = font_set[i];
+        platform_write_mem(chip8, FONT_SET_START_ADDRESS + i, font_set[i]);
     }
 }
 
@@ -54,8 +53,7 @@ void rom_load_rom(Chip8* chip8, const char *path) {
 	}
 
 	for (long i = 0; i < size; i++) {
-
-		chip8->memory[PROGRAM_START_ADDRESS + i] = buffer[i];
+		platform_write_mem(chip8, FONT_SET_START_ADDRESS + i, buffer[i]);
 	}
 
 	printf("ROM source successfully loaded: %s (%d bytes)", *path, size);
