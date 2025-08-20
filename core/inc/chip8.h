@@ -17,14 +17,14 @@ typedef struct {
     // CPU
     uint8_t V[REGISTER_COUNT];      // General-purpose Registers (V0-VF)
     uint16_t I;                     // Index Register
-    uint16_t pc;                    // Program Counter
+    uint16_t PC;                    // Program Counter
 
     //  Memory
     uint8_t memory[MEMORY_SIZE];
 
     // Stack
     uint16_t stack[STACK_DEPTH];
-    uint8_t sp;                     // Stack Pointer
+    uint8_t SP;                     // Stack Pointer
 
     // Timers
     uint8_t delay_timer;
