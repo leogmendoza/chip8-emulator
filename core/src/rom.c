@@ -1,4 +1,7 @@
+#include <stdio.h>
+
 #include "rom.h"
+#include "memory.h"
 
 /* Each letter is represented by 5 rows of bytes. Take "F" for example:
  * 11110000
@@ -37,6 +40,32 @@ void rom_load_font(Chip8* chip8) {
     }
 }
 
-void rom_load_rom(Chip8* chip8) {
-    return;
+void rom_load_rom(Chip8* chip8, const char *filename) {
+	// Open file in binary mode
+	FILE *file = fopen(filename, "rb");
+	
+	if (file == NULL) {
+		printf("File could not be opened: %s", *filename);
+
+		return;
+	}
+
+	// Get file size by jumping to the end position
+	fseek(file, 0, SEEK_END);
+	long file_size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	// Fill a buffer with file contents to read bytes into program memory
+	uint8_t buffer[file_size];
+
+	fread(buffer, file_size);
+	fclose(file);
+
+	for (long i = 0; i < file_size; i++) {
+		chip8->memory[PROGRAM_START_ADDRESS + i] = buffer[i];
+	}
+
+	printf("File successfully loaded: %s", *filename);
+
+	return;
 }
