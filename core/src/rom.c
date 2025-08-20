@@ -2,6 +2,7 @@
 
 #include "rom.h"
 #include "memory.h"
+#include "rom_loader.h"
 
 /* Each letter is represented by 5 rows of bytes. Take "F" for example:
  * 11110000
@@ -36,6 +37,7 @@ void rom_init(Chip8* chip8) {
 /* Copy font set into reserved section for characters */
 void rom_load_font(Chip8* chip8) {
     for (size_t i = 0; i < FONT_SET_SIZE; ++i) {
+
         chip8->memory[FONT_SET_START_ADDRESS + i] = font_set[i];
     }
 }
@@ -52,6 +54,7 @@ void rom_load_rom(Chip8* chip8, const char *path) {
 	}
 
 	for (long i = 0; i < size; i++) {
+
 		chip8->memory[PROGRAM_START_ADDRESS + i] = buffer[i];
 	}
 

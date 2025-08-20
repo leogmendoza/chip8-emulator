@@ -1,6 +1,18 @@
 #include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
 
-#include "platform.h"
+#include "rom_loader.h"
+
+#ifdef PLATFORM_PC
+
+uint8_t platform_read_mem(Chip8* chip8, uint16_t address) {
+    return chip8->memory[address];
+}
+
+void platform_write_mem(Chip8* chip8, uint16_t address, uint8_t value) {
+    chip8->memory[address] = value;
+}
 
 int platform_load_rom(uint8_t *buffer, size_t max_size, const char *path) {
     // Open file in binary mode
@@ -27,3 +39,5 @@ int platform_load_rom(uint8_t *buffer, size_t max_size, const char *path) {
 
 	return size;
 }
+
+#endif
