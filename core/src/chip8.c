@@ -14,4 +14,5 @@ void chip8_init(Chip8* chip8) {
     chip8->PC = PROGRAM_START_ADDRESS;
 
     rom_init(chip8);
+    cpu_init(chip8);
 }   
