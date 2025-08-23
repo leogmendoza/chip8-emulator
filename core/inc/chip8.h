@@ -3,7 +3,6 @@
 #include <stdint.h>
 
 #include "memory.h"
-#include "rom.h"
 
 #define REGISTER_COUNT 16
 #define MEMORY_SIZE 4096

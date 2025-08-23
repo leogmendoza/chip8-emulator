@@ -1,4 +1,8 @@
+#include <string.h>
+
 #include "chip8.h"
+#include "rom.h"
+#include "cpu.h"
 
 void chip8_init(Chip8* chip8) {
     // Clear registers and stack

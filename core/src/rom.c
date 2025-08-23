@@ -47,7 +47,7 @@ void rom_load_rom(Chip8* chip8, const char *path) {
 	int size = platform_load_rom(buffer, sizeof(buffer), path);
 
 	if (size < 0) {
-		printf("ROM source could not be loaded: %s", *path);
+		printf("ROM source could not be loaded: %s", path);
 
 		return;
 	}

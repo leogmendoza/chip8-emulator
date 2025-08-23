@@ -13,4 +13,4 @@
 
 void rom_init(Chip8* chip8);
 void rom_load_font(Chip8* chip8);
-void rom_load_rom(Chip8* chip8, const char *filename);
+void rom_load_rom(Chip8* chip8, const char *path);
