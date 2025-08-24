@@ -3,6 +3,19 @@
 
 #include "instructions.h"
 
+// Non-zero RNG state
+static uint32_t rng_state = 1285334002;  // Chosen by yoms >_<
+
+/* RNG Helper */
+static uint8_t random_byte(void) {
+    // xorshift32 algorithm
+    rng_state ^= rng_state << 13;
+    rng_state ^= rng_state >> 17;
+    rng_state ^= rng_state << 5;
+
+    return (uint8_t)(rng_state & 0xFF);
+}
+
 /* No-operation (NOP) */
 void op_null(Chip8 *chip8, uint16_t opcode) {
     return;
@@ -42,16 +55,29 @@ void op_2nnn(Chip8* chip8, uint16_t opcode) {
 
 /* SE Vx, byte: Skip next instruction if Vx = kk */
 void op_3xkk(Chip8* chip8, uint16_t opcode) {
-    if ( chip8->V[( (opcode & 0x0F00) >> 8 )] == (opcode & 0x00FF) ) {
+    if ( chip8->V[ (opcode & 0x0F00) >> 8 ] == (opcode & 0x00FF) ) {
         chip8->PC += 2; 
     }
+
+    return;
 }
 
 /* SNE Vx, byte: Skip next instruction if Vx != kk */
 void op_4xkk(Chip8* chip8, uint16_t opcode) {
-    if ( chip8->V[( (opcode & 0x0F00) >> 8 )] != (opcode & 0x00FF) ) {
+    if ( chip8->V[ (opcode & 0x0F00) >> 8 ] != (opcode & 0x00FF) ) {
         chip8->PC += 2; 
     }
+
+    return;
+}
+
+/* SE Vx, Vy: Skip next instruction if Vx = Vy */
+void op_5xy0(Chip8* chip8, uint16_t opcode) {
+    if ( chip8->V[ (opcode & 0x0F00) >> 8 ] == chip8->V[ (opcode & 0x00F0) >> 4 ] ) {
+        chip8->PC += 2; 
+    }
+
+    return;
 }
 
 /* LD Vx, byte: Set register Vx to kk */
@@ -68,9 +94,148 @@ void op_7xkk(Chip8 *chip8, uint16_t opcode) {
     return;
 }
 
+/* LD Vx, Vy: Set Vx = Vy */
+void op_8xy0(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t y = (opcode & 0x00F0) > 4;
+
+    chip8->V[x] = chip8->V[y];
+
+    return;
+}
+
+/* OR Vx, Vy: Set Vx = Vx OR Vy */
+void op_8xy1(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t y = (opcode & 0x00F0) > 4;
+
+    chip8->V[x] |= chip8->V[y];
+
+    return;
+}
+
+/* AND Vx, Vy: Set Vx = Vx AND Vy */
+void op_8xy2(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t y = (opcode & 0x00F0) > 4;
+
+    chip8->V[x] &= chip8->V[y];
+
+    return;
+}
+
+/* XOR Vx, Vy: Set Vx = Vx XOR Vy */
+void op_8xy3(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t y = (opcode & 0x00F0) > 4;
+
+    chip8->V[x] ^= chip8->V[y];
+
+    return;
+}
+
+/* ADD Vx, Vy: Set Vx = Vx + Vy, set VF = carry (overflow flag) */
+void op_8xy4(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t y = (opcode & 0x00F0) > 4;
+
+    uint16_t sum = chip8->V[x] + chip8->V[y]; 
+
+    // Check for overflow
+    if (sum > 255) {
+        chip8->V[0xF] = 1;
+
+    } else {
+        chip8->V[0xF] = 0;
+    }
+
+    chip8->V[x] = sum & 0x00FF;
+
+    return;
+}
+
+/* SUB Vx, Vy: Set Vx = Vx - Vy, set VF = NOT borrow */
+void op_8xy5(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t y = (opcode & 0x00F0) > 4;
+
+    if ( chip8->V[x] > chip8->V[y] ) {
+        chip8->V[0xF] = 1;
+    } else {
+        chip8->V[0xF] = 0;
+    }
+    
+    chip8->V[x] -= chip8->V[y];
+
+    return;
+}
+
+/* SHR Vx {, Vy}: Set Vx = Vx shifted right by 1 */
+void op_8xy6(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+
+    // Save LSB in VF
+    chip8->V[0xF] = chip8->V[x] & 0x0001;
+
+    chip8->V[x] >>= 1;
+
+    return;
+}
+
+/* SUBN Vx, Vy: Set Vx = Vy - Vx, set VF = NOT borrow */
+void op_8xy7(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t y = (opcode & 0x00F0) > 4;
+
+    if ( chip8->V[y] > chip8->V[x] ) {
+        chip8->V[0xF] = 1;
+    } else {
+        chip8->V[0xF] = 0;
+    }
+    
+    chip8->V[x] = chip8->V[y] - chip8->V[x];
+
+    return;
+}
+
+/* SHL Vx {, Vy}: Set Vx = Vx SHL 1 */
+void op_8xyE(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+
+    // Save MSB in VF
+    chip8->V[0xF] = chip8->V[x] >> 7;
+
+    chip8->V[x] <<= 1;
+
+    return;
+}
+
+/* SNE Vx, Vy: Skip next instruction if Vx != Vy */
+void op_9xy0(Chip8* chip8, uint16_t opcode) {
+    if ( chip8->V[ (opcode & 0x0F00) >> 8 ] != chip8->V[ (opcode & 0x00F0) >> 4 ] ) {
+        chip8->PC += 2; 
+    }
+
+    return;
+}
+
 /* LD I, addr: Set index register to nnn */
 void op_Annn(Chip8 *chip8, uint16_t opcode) {
     chip8->I = ( opcode & 0x0FFF );
+
+    return;
+}
+
+/* JP V0, addr: Jump to location nnn + V0 */
+void op_Bnnn(Chip8* chip8, uint16_t opcode) {
+    chip8->PC = (opcode & 0x0FFF) + (chip8->V[0x0]);
+
+    return;
+}
+
+/* RND Vx, byte */
+void op_Cxkk(Chip8* chip8, uint16_t opcode) {
+    chip8->V[ (opcode & 0x0F00) >> 8 ] = random_byte() & (opcode & 0x00FF);
 
     return;
 }
@@ -122,5 +287,24 @@ void op_Dxyn(Chip8 *chip8, uint16_t opcode) {
     return;
 }
 
+/* SKP Vx: Skip next instruction if key Vx is pressed */
+void op_ExA1(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
 
+    if ( chip8->keypad[ chip8->V[x] ] ) {
+        chip8->PC += 2;
+    }
 
+    return;
+}
+
+/* SKNP Vx: Skip next instruction if key Vx is not pressed */
+void op_Ex9E(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) > 8;
+
+    if ( !chip8->keypad[ chip8->V[x] ] ) {
+        chip8->PC += 2;
+    }
+
+    return;
+}
