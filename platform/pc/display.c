@@ -24,7 +24,7 @@ int platform_display_init(void) {
 
     // Create scaled-up window (currently from 64x32 to 640x320)
     sdl_config.window = SDL_CreateWindow(
-        "CHIP-8 Emulator",
+        "CHIP-8 Emulator by Leopoldo Mendoza",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         DISPLAY_WIDTH * SCALE, DISPLAY_HEIGHT * SCALE,
         SDL_WINDOW_SHOWN

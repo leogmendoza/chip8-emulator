@@ -3,19 +3,19 @@
 
 #include "instructions.h"
 
-// No-operation (NOP)
+/* No-operation (NOP) */
 void op_null(Chip8 *chip8, uint16_t opcode) {
     return;
 }
 
-// CLS: Clear screen
+/* CLS: Clear screen */
 void op_00E0(Chip8 *chip8, uint16_t opcode) {
     memset(chip8->display, 0, sizeof(chip8->display));
 
     return;
 }
 
-// RET: Return from subroutine
+/* RET: Return from subroutine */
 void op_00EE(Chip8* chip8, uint16_t opcode) {
     --chip8->SP;
     chip8->PC = chip8->stack[chip8->SP];
@@ -23,14 +23,14 @@ void op_00EE(Chip8* chip8, uint16_t opcode) {
     return;
 }
 
-// JP addr: Jump to memory location nnn
+/* JP addr: Jump to memory location nnn */
 void op_1nnn(Chip8 *chip8, uint16_t opcode) {
     chip8->PC = (opcode & 0x0FFF);
 
     return;
 }
 
-// CALL addr: Call subroutine at nnn
+/* CALL addr: Call subroutine at nnn */
 void op_2nnn(Chip8* chip8, uint16_t opcode) {
     chip8->stack[chip8->SP] = chip8->PC;
     chip8->SP++;
@@ -40,28 +40,42 @@ void op_2nnn(Chip8* chip8, uint16_t opcode) {
     return;
 }
 
-// LD Vx, byte: Set register Vx to kk
+/* SE Vx, byte: Skip next instruction if Vx = kk */
+void op_3xkk(Chip8* chip8, uint16_t opcode) {
+    if ( chip8->V[( (opcode & 0x0F00) >> 8 )] == (opcode & 0x00FF) ) {
+        chip8->PC += 2; 
+    }
+}
+
+/* SNE Vx, byte: Skip next instruction if Vx != kk */
+void op_4xkk(Chip8* chip8, uint16_t opcode) {
+    if ( chip8->V[( (opcode & 0x0F00) >> 8 )] != (opcode & 0x00FF) ) {
+        chip8->PC += 2; 
+    }
+}
+
+/* LD Vx, byte: Set register Vx to kk */
 void op_6xkk(Chip8 *chip8, uint16_t opcode) {
     chip8->V[( (opcode & 0x0F00) >> 8 )] = ( opcode & 0x00FF );
 
     return;
 }
 
-// ADD Vx, byte: Increment register Vx by kk
+/* ADD Vx, byte: Increment register Vx by kk */
 void op_7xkk(Chip8 *chip8, uint16_t opcode) {
     chip8->V[( (opcode & 0x0F00) >> 8 )] += ( opcode & 0x00FF );
 
     return;
 }
 
-// LD I, addr: Set index register to nnn
+/* LD I, addr: Set index register to nnn */
 void op_Annn(Chip8 *chip8, uint16_t opcode) {
     chip8->I = ( opcode & 0x0FFF );
 
     return;
 }
 
-// DRW Vx, Vy, nibble: Display n-byte sprite from memory location I at (Vx, Vy), set VF = collision
+/* DRW Vx, Vy, nibble: Display n-byte sprite from memory location I at (Vx, Vy), set VF = collision */
 void op_Dxyn(Chip8 *chip8, uint16_t opcode) {
     uint8_t starting_x_pos = chip8->V[( (opcode & 0x0F00) >> 8 )] % DISPLAY_WIDTH;
     uint8_t starting_y_pos = chip8->V[( (opcode & 0x00F0) >> 4 )] % DISPLAY_HEIGHT;

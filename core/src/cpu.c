@@ -34,6 +34,8 @@ void cpu_init(Chip8 *chip8) {
     table[0x0] = table0_dispatch;
     table[0x1] = op_1nnn;
     table[0x2] = op_2nnn;
+    table[0x3] = op_3xkk;
+    table[0x4] = op_4xkk;
     table[0x6] = op_6xkk;
     table[0x7] = op_7xkk;
     table[0xA] = op_Annn;
