@@ -14,7 +14,7 @@ typedef struct {
 
 static SdlConfig sdl_config = {NULL, NULL, NULL};
 
-int display_init(void) {
+int platform_display_init(void) {
     // Set up SDL video subsystem
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("SDL video subsystem could not be initialized: %s\n", SDL_GetError());
@@ -45,7 +45,7 @@ int display_init(void) {
         return 1;
     }
 
-    // Create texture (64x32 pixel buffer, RGBA)
+    // Create texture (64x32 pixel buffer, 32-bit RGBA format)
     sdl_config.texture = SDL_CreateTexture(
         sdl_config.renderer,
         SDL_PIXELFORMAT_RGBA8888,
@@ -62,12 +62,45 @@ int display_init(void) {
     return 0;
 }
 
-void display_destroy(void) {
-
+void platform_display_destroy(void) {
+    SDL_DestroyTexture(sdl_config.texture);
+    SDL_DestroyRenderer(sdl_config.renderer);
+    SDL_DestroyWindow(sdl_config.window);
+    SDL_Quit();
 }
 
-void display_draw(const Chip8* chip8) {
+void platform_display_draw(const uint8_t *framebuffer) {
+    uint32_t pixels[DISPLAY_SIZE];
 
+    // Map CHIP-8 display to 32-bit white or black
+    for (int i = 0; i < DISPLAY_SIZE; i++) {
+        pixels[i] = ( framebuffer[i] ? 0xFFFFFFFF : 0x000000FF );
+    }
+
+    // Copy pixels into texture
+    SDL_UpdateTexture(sdl_config.texture, NULL, pixels, DISPLAY_WIDTH * sizeof(uint32_t));
+
+    // Clear window
+    SDL_RenderClear(sdl_config.renderer);
+
+    // Copy texture onto window
+    SDL_RenderCopy(sdl_config.renderer, sdl_config.texture, NULL, NULL);
+
+    // Show new frame
+    SDL_RenderPresent(sdl_config.renderer);
+}
+
+int platform_display_poll_events(void) {
+    SDL_Event e;
+
+    while (SDL_PollEvent(&e)) {
+        // Exit window
+        if (e.type == SDL_QUIT) {
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 #endif

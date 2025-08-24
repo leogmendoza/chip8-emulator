@@ -20,15 +20,28 @@ int main(int argc, char *argv[]) {
 
     rom_load_rom(&chip8, argv[1]);
 
-    if (display_init() != 0) {
+    if (platform_display_init() != 0) {
         printf("Display could not be initialized");
 
         return 1;
     }
 
-    while(1) {
-        cpu_cycle(&chip8);
+    int running = 1;
+
+    while(running) {
+        // Run multiple instructions per frame
+        for (size_t i = 0; i < INSTRUCTIONS_PER_FRAME; i++) {
+            cpu_cycle(&chip8);
+        }
+
+        // Draw once per frame
+        platform_display_draw(chip8.display);
+
+        // Handle window closing gracefully
+        running = platform_display_poll_events();
     }
     
+    platform_display_destroy();
+
     return 0;
 }

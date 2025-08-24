@@ -6,15 +6,15 @@
 
 #ifdef PLATFORM_PC
 
-uint8_t platform_read_mem(Chip8* chip8, uint16_t address) {
+uint8_t platform_rom_loader_read_mem(Chip8* chip8, uint16_t address) {
     return chip8->memory[address];
 }
 
-void platform_write_mem(Chip8* chip8, uint16_t address, uint8_t value) {
+void platform_rom_loader_write_mem(Chip8* chip8, uint16_t address, uint8_t value) {
     chip8->memory[address] = value;
 }
 
-int platform_load_rom(uint8_t *buffer, size_t max_size, const char *path) {
+int platform_rom_loader_load_rom(uint8_t *buffer, size_t max_size, const char *path) {
     // Open file in binary mode
 	FILE *file = fopen(path, "rb");
 	
