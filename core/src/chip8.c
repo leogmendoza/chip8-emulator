@@ -5,8 +5,11 @@
 #include "cpu.h"
 
 void chip8_init(Chip8* chip8) {
-    // Clear registers and stack
+    // Clear everything
     memset(chip8->V, 0, sizeof(chip8->V));
+    memset(chip8->memory, 0, sizeof(chip8->memory));
+    memset(chip8->display, 0, sizeof(chip8->display));
+
     chip8->I = 0;
     chip8->SP = 0;
 

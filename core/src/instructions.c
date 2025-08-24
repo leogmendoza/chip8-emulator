@@ -15,8 +15,26 @@ void op_00E0(Chip8 *chip8, uint16_t opcode) {
     return;
 }
 
+// RET: Return from subroutine
+void op_00EE(Chip8* chip8, uint16_t opcode) {
+    --chip8->SP;
+    chip8->PC = chip8->stack[chip8->SP];
+
+    return;
+}
+
 // JP addr: Jump to memory location nnn
 void op_1nnn(Chip8 *chip8, uint16_t opcode) {
+    chip8->PC = (opcode & 0x0FFF);
+
+    return;
+}
+
+// CALL addr: Call subroutine at nnn
+void op_2nnn(Chip8* chip8, uint16_t opcode) {
+    chip8->stack[chip8->SP] = chip8->PC;
+    chip8->SP++;
+
     chip8->PC = (opcode & 0x0FFF);
 
     return;
@@ -51,6 +69,11 @@ void op_Dxyn(Chip8 *chip8, uint16_t opcode) {
     chip8->V[0xF] = 0;
 
     for (size_t row = 0; row < ( opcode & 0x000F ); row++) {
+        // Protect against index out-of-range
+        if (chip8->I + row >= MEMORY_SIZE) {
+            return;
+        }
+
         uint8_t current_y_pos = starting_y_pos + row;
         uint8_t sprite_byte = chip8->memory[chip8->I + row];
 
@@ -84,3 +107,6 @@ void op_Dxyn(Chip8 *chip8, uint16_t opcode) {
     }
     return;
 }
+
+
+

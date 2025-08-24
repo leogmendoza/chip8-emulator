@@ -25,8 +25,7 @@ target_include_directories(chip8 PRIVATE
 
 # Find SDL2 for graphics/input
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
 add_definitions(-DSDL_MAIN_HANDLED)  # Tell SDL2 you're the captain now basically
 
-# Define executable target
-target_link_libraries(chip8 ${SDL2_LIBRARY})
+# Link SDL2 properly
+target_link_libraries(chip8 PRIVATE SDL2::SDL2)
