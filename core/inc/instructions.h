@@ -35,3 +35,12 @@ void op_Dxyn(Chip8* chip8, uint16_t opcode);
 void op_ExA1(Chip8* chip8, uint16_t opcode);
 void op_Ex9E(Chip8* chip8, uint16_t opcode);
 
+void op_Fx07(Chip8* chip8, uint16_t opcode);
+void op_Fx0A(Chip8* chip8, uint16_t opcode);
+void op_Fx15(Chip8* chip8, uint16_t opcode);
+void op_Fx18(Chip8* chip8, uint16_t opcode);
+void op_Fx1E(Chip8* chip8, uint16_t opcode);
+void op_Fx29(Chip8* chip8, uint16_t opcode);
+void op_Fx33(Chip8* chip8, uint16_t opcode);
+void op_Fx55(Chip8* chip8, uint16_t opcode);
+void op_Fx65(Chip8* chip8, uint16_t opcode);

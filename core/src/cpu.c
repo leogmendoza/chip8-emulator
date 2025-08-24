@@ -76,6 +76,16 @@ void cpu_init(Chip8 *chip8) {
     tableE[0x1] = op_ExA1;
     tableE[0xE] = op_Ex9E;
 
+    tableF[0x07] = op_Fx07;
+    tableF[0x0A] = op_Fx0A;
+    tableF[0x15] = op_Fx15;
+    tableF[0x18] = op_Fx18;
+    tableF[0x1E] = op_Fx1E;
+    tableF[0x29] = op_Fx29;
+    tableF[0x33] = op_Fx33;
+    tableF[0x55] = op_Fx55;
+    tableF[0x65] = op_Fx65;
+
     return;
 }
 
