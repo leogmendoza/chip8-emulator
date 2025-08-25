@@ -4,6 +4,7 @@
 #include "cpu.h"
 #include "rom.h"
 #include "display.h"
+#include "input.h"
 
 int main(int argc, char *argv[]) {
     printf("Booting up the Chip-8 Emulator!\n");
@@ -26,6 +27,12 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    if (platform_input_init() != 0) {
+        printf("Input could not be initialized");
+
+        return 1;
+    }
+
     int running = 1;
 
     while(running) {
@@ -37,11 +44,15 @@ int main(int argc, char *argv[]) {
         // Draw once per frame
         platform_display_draw(chip8.display);
 
+        // Poll for pressed inputs
+        platform_input_update(chip8.keypad);
+
         // Handle window closing gracefully
         running = platform_display_poll_events();
     }
     
     platform_display_destroy();
+    platform_input_destroy();
 
     return 0;
 }
