@@ -96,8 +96,8 @@ void op_7xkk(Chip8 *chip8, uint16_t opcode) {
 
 /* LD Vx, Vy: Set Vx = Vy */
 void op_8xy0(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
-    uint8_t y = (opcode & 0x00F0) > 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
 
     chip8->V[x] = chip8->V[y];
 
@@ -106,8 +106,8 @@ void op_8xy0(Chip8* chip8, uint16_t opcode) {
 
 /* OR Vx, Vy: Set Vx = Vx OR Vy */
 void op_8xy1(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
-    uint8_t y = (opcode & 0x00F0) > 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
 
     chip8->V[x] |= chip8->V[y];
 
@@ -116,8 +116,8 @@ void op_8xy1(Chip8* chip8, uint16_t opcode) {
 
 /* AND Vx, Vy: Set Vx = Vx AND Vy */
 void op_8xy2(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
-    uint8_t y = (opcode & 0x00F0) > 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
 
     chip8->V[x] &= chip8->V[y];
 
@@ -126,8 +126,8 @@ void op_8xy2(Chip8* chip8, uint16_t opcode) {
 
 /* XOR Vx, Vy: Set Vx = Vx XOR Vy */
 void op_8xy3(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
-    uint8_t y = (opcode & 0x00F0) > 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
 
     chip8->V[x] ^= chip8->V[y];
 
@@ -136,8 +136,8 @@ void op_8xy3(Chip8* chip8, uint16_t opcode) {
 
 /* ADD Vx, Vy: Set Vx = Vx + Vy, set VF = carry (overflow flag) */
 void op_8xy4(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
-    uint8_t y = (opcode & 0x00F0) > 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
 
     uint16_t sum = chip8->V[x] + chip8->V[y]; 
 
@@ -156,8 +156,8 @@ void op_8xy4(Chip8* chip8, uint16_t opcode) {
 
 /* SUB Vx, Vy: Set Vx = Vx - Vy, set VF = NOT borrow */
 void op_8xy5(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
-    uint8_t y = (opcode & 0x00F0) > 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
 
     if ( chip8->V[x] > chip8->V[y] ) {
         chip8->V[0xF] = 1;
@@ -172,7 +172,7 @@ void op_8xy5(Chip8* chip8, uint16_t opcode) {
 
 /* SHR Vx {, Vy}: Set Vx = Vx shifted right by 1 */
 void op_8xy6(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t x = (opcode & 0x0F00) >> 8;
 
     // Save LSB in VF
     chip8->V[0xF] = chip8->V[x] & 0x0001;
@@ -184,8 +184,8 @@ void op_8xy6(Chip8* chip8, uint16_t opcode) {
 
 /* SUBN Vx, Vy: Set Vx = Vy - Vx, set VF = NOT borrow */
 void op_8xy7(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
-    uint8_t y = (opcode & 0x00F0) > 4;
+    uint8_t x = (opcode & 0x0F00) >> 8;
+    uint8_t y = (opcode & 0x00F0) >> 4;
 
     if ( chip8->V[y] > chip8->V[x] ) {
         chip8->V[0xF] = 1;
@@ -200,7 +200,7 @@ void op_8xy7(Chip8* chip8, uint16_t opcode) {
 
 /* SHL Vx {, Vy}: Set Vx = Vx SHL 1 */
 void op_8xyE(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
+    uint8_t x = (opcode & 0x0F00) >> 8;
 
     // Save MSB in VF
     chip8->V[0xF] = chip8->V[x] >> 7;
@@ -288,8 +288,8 @@ void op_Dxyn(Chip8 *chip8, uint16_t opcode) {
 }
 
 /* SKP Vx: Skip next instruction if key Vx is pressed */
-void op_ExA1(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
+void op_Ex9E(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) >> 8;
 
     if ( chip8->keypad[ chip8->V[x] ] ) {
         chip8->PC += 2;
@@ -299,8 +299,8 @@ void op_ExA1(Chip8* chip8, uint16_t opcode) {
 }
 
 /* SKNP Vx: Skip next instruction if key Vx is not pressed */
-void op_Ex9E(Chip8* chip8, uint16_t opcode) {
-    uint8_t x = (opcode & 0x0F00) > 8;
+void op_ExA1(Chip8* chip8, uint16_t opcode) {
+    uint8_t x = (opcode & 0x0F00) >> 8;
 
     if ( !chip8->keypad[ chip8->V[x] ] ) {
         chip8->PC += 2;
@@ -354,9 +354,9 @@ void op_Fx1E(Chip8* chip8, uint16_t opcode) {
     return;
 } 
 
-/* LD F, Vx: Set I = location of sprite for digit Vx */
+/* LD F, Vx: Set I = memory location of sprite (in font set) for digit Vx */
 void op_Fx29(Chip8* chip8, uint16_t opcode) {
-    chip8->I = chip8->memory[ FONT_SET_START_ADDRESS + ((opcode & 0x0F00) >> 8) ];
+    chip8->I = chip8->memory[ FONT_SET_START_ADDRESS + (((opcode & 0x0F00) >> 8) * 5) ];
 
     return;
 } 
@@ -365,13 +365,16 @@ void op_Fx29(Chip8* chip8, uint16_t opcode) {
 void op_Fx33(Chip8* chip8, uint16_t opcode) {
     uint8_t num = chip8->V[ (opcode & 0x0F00) >> 8 ];
 
+    // Store ones place
     chip8->memory[chip8->I + 2] = num % 10;
     num /= 10;
 
-    chip8->memory[chip8->I] = num % 10;
+    // Store tens place
+    chip8->memory[chip8->I + 1] = num % 10;
     num /= 10;
 
-    chip8->memory[chip8->I + 1] = num % 10;
+    // Store hundreds place
+    chip8->memory[chip8->I] = num % 10;
 
     return;
 } 
