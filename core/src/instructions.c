@@ -23,7 +23,7 @@ void op_null(Chip8 *chip8, uint16_t opcode) {
 
 /* CLS: Clear screen */
 void op_00E0(Chip8 *chip8, uint16_t opcode) {
-    memset(chip8->display, 0, sizeof(chip8->display));
+    memset(chip8->display, 0, (DISPLAY_WIDTH * DISPLAY_HEIGHT));
 
     return;
 }
@@ -159,7 +159,7 @@ void op_8xy5(Chip8* chip8, uint16_t opcode) {
     uint8_t x = (opcode & 0x0F00) >> 8;
     uint8_t y = (opcode & 0x00F0) >> 4;
 
-    if ( chip8->V[x] > chip8->V[y] ) {
+    if ( chip8->V[x] >= chip8->V[y] ) {
         chip8->V[0xF] = 1;
     } else {
         chip8->V[0xF] = 0;
@@ -175,7 +175,7 @@ void op_8xy6(Chip8* chip8, uint16_t opcode) {
     uint8_t x = (opcode & 0x0F00) >> 8;
 
     // Save LSB in VF
-    chip8->V[0xF] = chip8->V[x] & 0x0001;
+    chip8->V[0xF] = chip8->V[x] & 0x01;
 
     chip8->V[x] >>= 1;
 
@@ -187,7 +187,7 @@ void op_8xy7(Chip8* chip8, uint16_t opcode) {
     uint8_t x = (opcode & 0x0F00) >> 8;
     uint8_t y = (opcode & 0x00F0) >> 4;
 
-    if ( chip8->V[y] > chip8->V[x] ) {
+    if ( chip8->V[y] >= chip8->V[x] ) {
         chip8->V[0xF] = 1;
     } else {
         chip8->V[0xF] = 0;
@@ -349,14 +349,24 @@ void op_Fx18(Chip8* chip8, uint16_t opcode) {
 
 /* ADD I, Vx: Set I = I + Vx */
 void op_Fx1E(Chip8* chip8, uint16_t opcode) {
-    chip8->I += chip8->V[ (opcode & 0x0F00) >> 8 ];
+    uint8_t x = (opcode & 0x0F00) >> 8;
+
+    // Flag overflow
+    chip8->V[0xF] = ( (chip8->I + chip8->V[x]) > 0x0FFF );
+
+    chip8->I += chip8->V[x];
 
     return;
 } 
 
 /* LD F, Vx: Set I = memory location of sprite (in font set) for digit Vx */
 void op_Fx29(Chip8* chip8, uint16_t opcode) {
-    chip8->I = chip8->memory[ FONT_SET_START_ADDRESS + (((opcode & 0x0F00) >> 8) * 5) ];
+    uint8_t x = (opcode & 0x0F00) >> 8;
+
+    // Extract last nibble
+    uint8_t digit = chip8->V[x] & 0x0F;  
+
+    chip8->I = FONT_SET_START_ADDRESS + ( 5 * digit );
 
     return;
 } 

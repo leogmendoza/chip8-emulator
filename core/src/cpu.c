@@ -21,11 +21,11 @@ static void table8_dispatch(Chip8* chip8, uint16_t opcode) {
 }
 
 static void tableE_dispatch(Chip8* chip8, uint16_t opcode) {
-    table8[( opcode & 0x000F )](chip8, opcode);
+    tableE[( opcode & 0x000F )](chip8, opcode);
 }
 
 static void tableF_dispatch(Chip8* chip8, uint16_t opcode) {
-    table8[( opcode & 0x00FF )](chip8, opcode);
+    tableF[( opcode & 0x00FF )](chip8, opcode);
 }
 
 void cpu_init(Chip8 *chip8) {
