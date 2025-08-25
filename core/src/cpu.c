@@ -104,16 +104,4 @@ void cpu_cycle(Chip8 *chip8) {
     //     "Executed: %04X | PC: %04X | I: %04X | V[0]=%02X V[1]=%02X ...\n",
     //     opcode, chip8->PC, chip8->I, chip8->V[0], chip8->V[1]
     // );
-    
-    // Decrement delay and sound timers if set
-	if (chip8->delay_timer > 0)
-	{
-		--chip8->delay_timer;
-	}
-
-	// Decrement the sound timer if it's been set
-	if (chip8->sound_timer > 0)
-	{
-		--chip8->sound_timer;
-	}
 }

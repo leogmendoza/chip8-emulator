@@ -5,7 +5,7 @@
 #include "platform.h"
 
 #define SCALE 10
-#define INSTRUCTIONS_PER_FRAME 10
+#define INSTRUCTIONS_PER_FRAME 4
 
 int platform_display_init(void);
 void platform_display_destroy(void);

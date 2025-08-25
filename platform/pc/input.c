@@ -40,6 +40,9 @@ void platform_input_destroy(void) {
 
 /* Update CHIP-8 keypad by polling SDL's keyboard state array */
 void platform_input_update(uint8_t keypad[16]) {
+    // Update event queue
+    SDL_PumpEvents();
+
     // Pointer to an SDL-managed array of all scancodes
     const uint8_t *state = SDL_GetKeyboardState(NULL);
 
