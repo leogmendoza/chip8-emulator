@@ -309,65 +309,91 @@ void op_Ex9E(Chip8* chip8, uint16_t opcode) {
     return;
 }
 
-/*  */
+/* LD Vx, DT: Set Vx = delay timer value */
 void op_Fx07(Chip8* chip8, uint16_t opcode) {
-    
-    
+    chip8->V[ (opcode & 0x0F00) >> 8 ] = chip8->delay_timer;
+
     return;
 } 
 
-/*  */
+/* LD Vx, K: Pause execution until a key is pressed, then store key in Vx */
 void op_Fx0A(Chip8* chip8, uint16_t opcode) {
-    
-    
+    for (size_t i = 0; i < INPUT_KEY_COUNT; ++i) {
+        // Find a pressed key
+        if (chip8->keypad[i]) {
+            chip8->V[ (opcode & 0x0F00) >> 8 ] = i;
+
+            return;
+        }
+    }
+
+    // Essentially, run instruction again if no key is pressed
+    chip8->PC -= 2;
+
     return;
 } 
 
-/*  */
+/* LD DT, Vx: Set delay timer = Vx */
 void op_Fx15(Chip8* chip8, uint16_t opcode) {
-    
-    
+    chip8->delay_timer = chip8->V[ (opcode & 0x0F00) >> 8 ];
+
     return;
 } 
 
-/*  */
+/* LD ST, Vx: Set sound timer = Vx */
 void op_Fx18(Chip8* chip8, uint16_t opcode) {
-    
-    
+    chip8->sound_timer = chip8->V[ (opcode & 0x0F00) >> 8 ];    
+
     return;
 } 
 
-/*  */
+/* ADD I, Vx: Set I = I + Vx */
 void op_Fx1E(Chip8* chip8, uint16_t opcode) {
-    
-    
+    chip8->I += chip8->V[ (opcode & 0x0F00) >> 8 ];
+
     return;
 } 
 
-/*  */
+/* LD F, Vx: Set I = location of sprite for digit Vx */
 void op_Fx29(Chip8* chip8, uint16_t opcode) {
-    
-    
+    chip8->I = chip8->memory[ FONT_SET_START_ADDRESS + ((opcode & 0x0F00) >> 8) ];
+
     return;
 } 
 
-/*  */
+/* LD B, Vx: Store BCD rep. of Vx in memory locations I, I+1, and I+2 */
 void op_Fx33(Chip8* chip8, uint16_t opcode) {
-    
-    
+    uint8_t num = chip8->V[ (opcode & 0x0F00) >> 8 ];
+
+    chip8->memory[chip8->I + 2] = num % 10;
+    num /= 10;
+
+    chip8->memory[chip8->I] = num % 10;
+    num /= 10;
+
+    chip8->memory[chip8->I + 1] = num % 10;
+
     return;
 } 
 
-/*  */
+/* LD [I], Vx: Store V0 through Vx (inclusive) in memory starting at location I */
 void op_Fx55(Chip8* chip8, uint16_t opcode) {
-    
-    
+    uint8_t x = (opcode & 0x0F00) >> 8;
+
+    for (size_t i = 0; i <= x; ++i) {
+        chip8->memory[chip8->I + i] = chip8->V[i];
+    }
+
     return;
 } 
 
-/*  */
+/* LD Vx, [I]: Load V0 through Vx (inclusive) from memory starting at location I */
 void op_Fx65(Chip8* chip8, uint16_t opcode) {
-    
-    
+    uint8_t x = (opcode & 0x0F00) >> 8;
+
+    for (size_t i = 0; i <= x; ++i) {
+        chip8->V[i] = chip8->memory[chip8->I + i];
+    }
+
     return;
 } 
