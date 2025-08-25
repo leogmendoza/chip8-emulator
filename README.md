@@ -1,3 +1,7 @@
-Status: Implemented enough of the 35 instructions to display the IBM logo woohoo!🥳
+Status: Implemented all 35 instructions and validated with some test ROMs!
 
-<img width="2560" height="1600" alt="image" src="https://github.com/user-attachments/assets/ded2a28a-104d-4517-9c4c-48c9e73f0944" />
+Aside: I Spent two hours debugging and just now realized that the bug was due to me mindlessly copy and pasting for my dispatch functions and forgetting to change the table names😭😭😭
+
+<img width="2560" height="1600" alt="image" src="https://github.com/user-attachments/assets/a2e6d2e1-bbad-4819-8427-4ea2c0831a4b" />
+
+<img width="2560" height="1600" alt="image" src="https://github.com/user-attachments/assets/6bb9c060-096e-413e-95f3-e0da96f51e0c" />
