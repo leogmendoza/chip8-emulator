@@ -52,6 +52,11 @@ void rom_load_rom(Chip8* chip8, const char *path) {
 		return;
 	}
 
+	// Prevent writing past memory
+	if ( (PROGRAM_START_ADDRESS + size) > MEMORY_SIZE) {
+    	size = MEMORY_SIZE - PROGRAM_START_ADDRESS;
+	}
+
 	for (long i = 0; i < size; i++) {
 		platform_rom_loader_write_mem(chip8, PROGRAM_START_ADDRESS + i, buffer[i]);
 	}

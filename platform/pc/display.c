@@ -13,6 +13,7 @@ typedef struct {
 } SdlConfig;
 
 static SdlConfig sdl_config = {NULL, NULL, NULL};
+static uint32_t pixels[DISPLAY_SIZE];
 
 int platform_display_init(void) {
     // Set up SDL video subsystem
@@ -70,8 +71,6 @@ void platform_display_destroy(void) {
 }
 
 void platform_display_draw(const uint8_t *framebuffer) {
-    uint32_t pixels[DISPLAY_SIZE];
-
     // Map CHIP-8 display to 32-bit white or black
     for (int i = 0; i < DISPLAY_SIZE; i++) {
         pixels[i] = ( framebuffer[i] ? 0xFFFFFFFF : 0x000000FF );

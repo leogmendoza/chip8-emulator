@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "instructions.h"
+#include "chip8.h"
 
 // Non-zero RNG state
 static uint32_t rng_state = 1285334002;  // Chosen by yoms >_<
@@ -30,6 +31,11 @@ void op_00E0(Chip8 *chip8, uint16_t opcode) {
 
 /* RET: Return from subroutine */
 void op_00EE(Chip8* chip8, uint16_t opcode) {
+    // Handle underflow
+    if (chip8->SP == 0) {
+        return;
+    }
+
     --chip8->SP;
     chip8->PC = chip8->stack[chip8->SP];
 
@@ -45,6 +51,11 @@ void op_1nnn(Chip8 *chip8, uint16_t opcode) {
 
 /* CALL addr: Call subroutine at nnn */
 void op_2nnn(Chip8* chip8, uint16_t opcode) {
+    // Handle overflow
+    if (chip8->SP >= STACK_DEPTH) {
+        return;
+    }
+
     chip8->stack[chip8->SP] = chip8->PC;
     chip8->SP++;
 
@@ -250,7 +261,7 @@ void op_Dxyn(Chip8 *chip8, uint16_t opcode) {
     for (size_t row = 0; row < ( opcode & 0x000F ); row++) {
         // Protect against index out-of-range
         if (chip8->I + row >= MEMORY_SIZE) {
-            return;
+            break;
         }
 
         uint8_t current_y_pos = starting_y_pos + row;
@@ -258,7 +269,7 @@ void op_Dxyn(Chip8 *chip8, uint16_t opcode) {
 
         // Stop drawing sprite when bottom edge is reached
         if (current_y_pos >= DISPLAY_HEIGHT) {
-            return;
+            break;
         }
 
         for (size_t col = 0; col < 8; col++) {
@@ -373,6 +384,10 @@ void op_Fx29(Chip8* chip8, uint16_t opcode) {
 
 /* LD B, Vx: Store BCD rep. of Vx in memory locations I, I+1, and I+2 */
 void op_Fx33(Chip8* chip8, uint16_t opcode) {
+    if ( (chip8->I + 2) >= MEMORY_SIZE) {
+        return;
+    }
+
     uint8_t num = chip8->V[ (opcode & 0x0F00) >> 8 ];
 
     // Store ones place
@@ -393,6 +408,11 @@ void op_Fx33(Chip8* chip8, uint16_t opcode) {
 void op_Fx55(Chip8* chip8, uint16_t opcode) {
     uint8_t x = (opcode & 0x0F00) >> 8;
 
+    // Prevent writing past end of memory
+    if ( (chip8->I + x) >= MEMORY_SIZE) {
+        return;
+    }
+
     for (size_t i = 0; i <= x; ++i) {
         chip8->memory[chip8->I + i] = chip8->V[i];
     }
@@ -403,6 +423,11 @@ void op_Fx55(Chip8* chip8, uint16_t opcode) {
 /* LD Vx, [I]: Load V0 through Vx (inclusive) from memory starting at location I */
 void op_Fx65(Chip8* chip8, uint16_t opcode) {
     uint8_t x = (opcode & 0x0F00) >> 8;
+
+    // Prevent writing past end of memory
+    if ( (chip8->I + x) >= MEMORY_SIZE) {
+        return;
+    }
 
     for (size_t i = 0; i <= x; ++i) {
         chip8->V[i] = chip8->memory[chip8->I + i];

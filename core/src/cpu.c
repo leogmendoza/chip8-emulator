@@ -90,6 +90,11 @@ void cpu_init(Chip8 *chip8) {
 }
 
 void cpu_cycle(Chip8 *chip8) {
+    // Prevent PC from reading beyond end of memory
+    if (chip8->PC + 1 >= MEMORY_SIZE) {
+        return;
+    }
+
     // FETCH next instruction from program counter as a two-byte opcode
     uint16_t opcode = ( chip8->memory[chip8->PC] << 8 | chip8->memory[chip8->PC + 1] );
 
