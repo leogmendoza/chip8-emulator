@@ -7,6 +7,7 @@
 #include "input.h"
 #include "timers.h"
 #include "timing.h"
+#include "sound.h"
 
 int main(int argc, char *argv[]) {
     printf("Booting up the Chip-8 Emulator!\n");
@@ -41,6 +42,12 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    if (platform_sound_init() != 0) {
+        printf("Sound could not be initialized");
+
+        return 1;
+    }
+
     int running = 1;
 
     while(running) {
@@ -58,10 +65,14 @@ int main(int argc, char *argv[]) {
         // Draw once per frame
         platform_display_draw(chip8.display);
 
+        // Beep while sound timer is activated
+        platform_sound_update(chip8.sound_timer > 0);
+
         // Ensure ticking at desired FPS
         platform_timing_sync(&chip8);
     }
     
+    platform_sound_destroy();  // Before SDL_Quit in display_destroy
     platform_display_destroy();
     platform_input_destroy();
     platform_timing_destroy();

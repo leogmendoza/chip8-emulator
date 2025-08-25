@@ -10,9 +10,9 @@ typedef struct {
     SDL_Window   *window;
     SDL_Renderer *renderer;
     SDL_Texture  *texture;
-} SdlConfig;
+} SdlVideoConfig;
 
-static SdlConfig sdl_config = {NULL, NULL, NULL};
+static SdlVideoConfig sdl_video_config = {NULL, NULL, NULL};
 static uint32_t pixels[DISPLAY_SIZE];
 
 int platform_display_init(void) {
@@ -24,37 +24,37 @@ int platform_display_init(void) {
     }
 
     // Create scaled-up window (currently from 64x32 to 640x320)
-    sdl_config.window = SDL_CreateWindow(
+    sdl_video_config.window = SDL_CreateWindow(
         "CHIP-8 Emulator by Leopoldo Mendoza",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         DISPLAY_WIDTH * SCALE, DISPLAY_HEIGHT * SCALE,
         SDL_WINDOW_SHOWN
     );
 
-    if (!sdl_config.window) {
+    if (!sdl_video_config.window) {
         SDL_Log("Window could not be created: %s\n", SDL_GetError());
 
         return 1;
     }
 
     // Create accelerated renderer
-    sdl_config.renderer = SDL_CreateRenderer(sdl_config.window, -1, SDL_RENDERER_ACCELERATED);
+    sdl_video_config.renderer = SDL_CreateRenderer(sdl_video_config.window, -1, SDL_RENDERER_ACCELERATED);
 
-    if (!sdl_config.renderer) {
+    if (!sdl_video_config.renderer) {
         SDL_Log("Renderer could not be created: %s\n", SDL_GetError());
 
         return 1;
     }
 
     // Create texture (64x32 pixel buffer, 32-bit RGBA format)
-    sdl_config.texture = SDL_CreateTexture(
-        sdl_config.renderer,
+    sdl_video_config.texture = SDL_CreateTexture(
+        sdl_video_config.renderer,
         SDL_PIXELFORMAT_RGBA8888,
         SDL_TEXTUREACCESS_STREAMING,
         DISPLAY_WIDTH,
         DISPLAY_HEIGHT
     );
-    if (!sdl_config.texture) {
+    if (!sdl_video_config.texture) {
         SDL_Log("Texture could not be created: %s\n", SDL_GetError());
          
         return 1;
@@ -64,9 +64,9 @@ int platform_display_init(void) {
 }
 
 void platform_display_destroy(void) {
-    SDL_DestroyTexture(sdl_config.texture);
-    SDL_DestroyRenderer(sdl_config.renderer);
-    SDL_DestroyWindow(sdl_config.window);
+    SDL_DestroyTexture(sdl_video_config.texture);
+    SDL_DestroyRenderer(sdl_video_config.renderer);
+    SDL_DestroyWindow(sdl_video_config.window);
     SDL_Quit();
 }
 
@@ -77,16 +77,16 @@ void platform_display_draw(const uint8_t *framebuffer) {
     }
 
     // Copy pixels into texture
-    SDL_UpdateTexture(sdl_config.texture, NULL, pixels, DISPLAY_WIDTH * sizeof(uint32_t));
+    SDL_UpdateTexture(sdl_video_config.texture, NULL, pixels, DISPLAY_WIDTH * sizeof(uint32_t));
 
     // Clear window
-    SDL_RenderClear(sdl_config.renderer);
+    SDL_RenderClear(sdl_video_config.renderer);
 
     // Copy texture onto window
-    SDL_RenderCopy(sdl_config.renderer, sdl_config.texture, NULL, NULL);
+    SDL_RenderCopy(sdl_video_config.renderer, sdl_video_config.texture, NULL, NULL);
 
     // Show new frame
-    SDL_RenderPresent(sdl_config.renderer);
+    SDL_RenderPresent(sdl_video_config.renderer);
 }
 
 int platform_display_poll_events(void) {
