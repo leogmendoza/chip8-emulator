@@ -15,7 +15,7 @@ typedef struct {
 static SdlVideoConfig sdl_video_config = {NULL, NULL, NULL};
 static uint32_t pixels[DISPLAY_SIZE];
 
-int platform_display_init(void) {
+int platform_display_init(int scale) {
     // Set up SDL video subsystem
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         SDL_Log("SDL video subsystem could not be initialized: %s\n", SDL_GetError());
@@ -27,7 +27,7 @@ int platform_display_init(void) {
     sdl_video_config.window = SDL_CreateWindow(
         "CHIP-8 Emulator by Leopoldo Mendoza",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        DISPLAY_WIDTH * SCALE, DISPLAY_HEIGHT * SCALE,
+        DISPLAY_WIDTH * scale, DISPLAY_HEIGHT * scale,
         SDL_WINDOW_SHOWN
     );
 

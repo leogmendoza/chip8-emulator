@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "chip8.h"
+#include "platform.h"
 #include "cpu.h"
 #include "rom.h"
 #include "display.h"
@@ -24,7 +25,7 @@ int main(int argc, char *argv[]) {
 
     rom_load_rom(&chip8, argv[1]);
 
-    if (platform_display_init() != 0) {
+    if (platform_display_init(DISPLAY_SCALE) != 0) {
         printf("Display could not be initialized");
 
         return 1;

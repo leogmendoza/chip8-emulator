@@ -4,10 +4,7 @@
 
 #include "platform.h"
 
-#define SCALE 10
-#define INSTRUCTIONS_PER_FRAME 4
-
-int platform_display_init(void);
+int platform_display_init(int scale);
 void platform_display_destroy(void);
 void platform_display_draw(const uint8_t *framebuffer);
 

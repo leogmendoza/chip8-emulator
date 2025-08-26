@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "cpu.h"
 #include "instructions.h"
+#include "cpu.h"
 
 // "Primary" function pointer table for leading nibble (0x0 - 0xF)
 static OpcodeHandler *table[0x10];

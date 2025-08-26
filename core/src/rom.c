@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "rom.h"
-#include "memory.h"
 #include "rom_loader.h"
 
 /* Each letter is represented by 5 rows of bytes. Take "F" for example:

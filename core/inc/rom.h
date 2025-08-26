@@ -3,7 +3,6 @@
 #include <stdint.h>
 
 #include "chip8.h"
-#include "memory.h"
 
 // Font Set
 #define CHARACTER_COUNT 16
