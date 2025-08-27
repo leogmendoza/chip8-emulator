@@ -5,7 +5,7 @@ project(chip8_emulator)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# Automatically collect all .c files from core/src and platform/src
+# Automatically collect all .c files from core/src and platform/pc
 file(GLOB CORE_SOURCES core/src/*.c)
 file(GLOB PLATFORM_SOURCES platform/pc/*.c)
 
