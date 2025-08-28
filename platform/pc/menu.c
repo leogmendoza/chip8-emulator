@@ -2,28 +2,294 @@
 
 #ifdef PLATFORM_PC
 
-#include "chip8.h"
 #include <string.h>
+#include "chip8.h"
+#include "display.h"
+#include "rom.h"
+#include "sound.h"
 
 static MenuState state;
 static int startup_frames;
 static int current_selection;
+static uint8_t menu_fb[DISPLAY_SIZE];
+static uint8_t prev_keypad[16];  // For rising-edge detection
+static int click_frames = 0;
 
-// ROM list
-static const *rom_list[] = {
-    "roms/tetris.ch8",
-    "roms/space_invaders.ch8",
-    "roms/pong.ch8"
+// List navigation indices
+static int general_index = 0;  // selected item
+static int screen_index  = 0;  // top-most item shown
+
+// ROM list from rom_catalog
+extern const char *rom_list[];
+extern const int rom_count;
+
+static const uint8_t font[] = {
+    0x06, // char width
+    0x08, // char height
+    0x20, // first char
+    0x5f, // char count
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   // <space>
+    0x00, 0x00, 0x00, 0x2f, 0x00, 0x00,   // !
+    0x00, 0x00, 0x07, 0x00, 0x07, 0x00,   // "
+    0x00, 0x14, 0x7f, 0x14, 0x7f, 0x14,   // #
+    0x00, 0x24, 0x2a, 0x7f, 0x2a, 0x12,   // $
+    0x00, 0x23, 0x13, 0x08, 0x64, 0x62,   // %
+    0x00, 0x36, 0x49, 0x55, 0x22, 0x50,   // &
+    0x00, 0x00, 0x05, 0x03, 0x00, 0x00,   // '
+    0x00, 0x00, 0x1c, 0x22, 0x41, 0x00,   // (
+    0x00, 0x00, 0x41, 0x22, 0x1c, 0x00,   // )
+    0x00, 0x14, 0x08, 0x3E, 0x08, 0x14,   // *
+    0x00, 0x08, 0x08, 0x3E, 0x08, 0x08,   // +
+    0x00, 0x00, 0x00, 0xA0, 0x60, 0x00,   // ,
+    0x00, 0x08, 0x08, 0x08, 0x08, 0x08,   // -
+    0x00, 0x00, 0x60, 0x60, 0x00, 0x00,   // .
+    0x00, 0x20, 0x10, 0x08, 0x04, 0x02,   // /
+
+    0x00, 0x3E, 0x51, 0x49, 0x45, 0x3E,   // 0
+    0x00, 0x00, 0x42, 0x7F, 0x40, 0x00,   // 1
+    0x00, 0x42, 0x61, 0x51, 0x49, 0x46,   // 2
+    0x00, 0x21, 0x41, 0x45, 0x4B, 0x31,   // 3
+    0x00, 0x18, 0x14, 0x12, 0x7F, 0x10,   // 4
+    0x00, 0x27, 0x45, 0x45, 0x45, 0x39,   // 5
+    0x00, 0x3C, 0x4A, 0x49, 0x49, 0x30,   // 6
+    0x00, 0x01, 0x71, 0x09, 0x05, 0x03,   // 7
+    0x00, 0x36, 0x49, 0x49, 0x49, 0x36,   // 8
+    0x00, 0x06, 0x49, 0x49, 0x29, 0x1E,   // 9
+    0x00, 0x00, 0x36, 0x36, 0x00, 0x00,   // :
+    0x00, 0x00, 0x56, 0x36, 0x00, 0x00,   // ;
+    0x00, 0x08, 0x14, 0x22, 0x41, 0x00,   // <
+    0x00, 0x14, 0x14, 0x14, 0x14, 0x00,   // =
+    0x00, 0x41, 0x22, 0x14, 0x08, 0x00,   // >
+    0x00, 0x02, 0x01, 0x51, 0x09, 0x06,   // ?
+
+    0x00, 0x32, 0x49, 0x59, 0x51, 0x3E,   // @
+    0x00, 0x7C, 0x12, 0x11, 0x12, 0x7C,   // A
+    0x00, 0x7F, 0x49, 0x49, 0x49, 0x36,   // B
+    0x00, 0x3E, 0x41, 0x41, 0x41, 0x22,   // C
+    0x00, 0x7F, 0x41, 0x41, 0x22, 0x1C,   // D
+    0x00, 0x7F, 0x49, 0x49, 0x49, 0x41,   // E
+    0x00, 0x7F, 0x09, 0x09, 0x09, 0x01,   // F
+    0x00, 0x3E, 0x41, 0x49, 0x49, 0x7A,   // G
+    0x00, 0x7F, 0x08, 0x08, 0x08, 0x7F,   // H
+    0x00, 0x00, 0x41, 0x7F, 0x41, 0x00,   // I
+    0x00, 0x20, 0x40, 0x41, 0x3F, 0x01,   // J
+    0x00, 0x7F, 0x08, 0x14, 0x22, 0x41,   // K
+    0x00, 0x7F, 0x40, 0x40, 0x40, 0x40,   // L
+    0x00, 0x7F, 0x02, 0x0C, 0x02, 0x7F,   // M
+    0x00, 0x7F, 0x04, 0x08, 0x10, 0x7F,   // N
+    0x00, 0x3E, 0x41, 0x41, 0x41, 0x3E,   // O
+
+    0x00, 0x7F, 0x09, 0x09, 0x09, 0x06,   // P
+    0x00, 0x3E, 0x41, 0x51, 0x21, 0x5E,   // Q
+    0x00, 0x7F, 0x09, 0x19, 0x29, 0x46,   // R
+    0x00, 0x46, 0x49, 0x49, 0x49, 0x31,   // S
+    0x00, 0x01, 0x01, 0x7F, 0x01, 0x01,   // T
+    0x00, 0x3F, 0x40, 0x40, 0x40, 0x3F,   // U
+    0x00, 0x1F, 0x20, 0x40, 0x20, 0x1F,   // V
+    0x00, 0x3F, 0x40, 0x38, 0x40, 0x3F,   // W
+    0x00, 0x63, 0x14, 0x08, 0x14, 0x63,   // X
+    0x00, 0x07, 0x08, 0x70, 0x08, 0x07,   // Y
+    0x00, 0x61, 0x51, 0x49, 0x45, 0x43,   // Z
+    0x00, 0x00, 0x7F, 0x41, 0x41, 0x00,   // [
+    0x00, 0xAA, 0x55, 0xAA, 0x55, 0x00,   // <backslash>
+    0x00, 0x00, 0x41, 0x41, 0x7F, 0x00,   // ]
+    0x00, 0x04, 0x02, 0x01, 0x02, 0x04,   // ^
+    0x00, 0x40, 0x40, 0x40, 0x40, 0x40,   // _
+
+    0x00, 0x00, 0x03, 0x05, 0x00, 0x00,   // `
+    0x00, 0x20, 0x54, 0x54, 0x54, 0x78,   // a
+    0x00, 0x7F, 0x48, 0x44, 0x44, 0x38,   // b
+    0x00, 0x38, 0x44, 0x44, 0x44, 0x20,   // c
+    0x00, 0x38, 0x44, 0x44, 0x48, 0x7F,   // d
+    0x00, 0x38, 0x54, 0x54, 0x54, 0x18,   // e
+    0x00, 0x08, 0x7E, 0x09, 0x01, 0x02,   // f
+    0x00, 0x18, 0xA4, 0xA4, 0xA4, 0x7C,   // g
+    0x00, 0x7F, 0x08, 0x04, 0x04, 0x78,   // h
+    0x00, 0x00, 0x44, 0x7D, 0x40, 0x00,   // i
+    0x00, 0x40, 0x80, 0x84, 0x7D, 0x00,   // j
+    0x00, 0x7F, 0x10, 0x28, 0x44, 0x00,   // k
+    0x00, 0x00, 0x41, 0x7F, 0x40, 0x00,   // l
+    0x00, 0x7C, 0x04, 0x18, 0x04, 0x78,   // m
+    0x00, 0x7C, 0x08, 0x04, 0x04, 0x78,   // n
+    0x00, 0x38, 0x44, 0x44, 0x44, 0x38,   // o
+
+    0x00, 0xFC, 0x24, 0x24, 0x24, 0x18,   // p
+    0x00, 0x18, 0x24, 0x24, 0x18, 0xFC,   // q
+    0x00, 0x7C, 0x08, 0x04, 0x04, 0x08,   // r
+    0x00, 0x48, 0x54, 0x54, 0x54, 0x20,   // s
+    0x00, 0x04, 0x3F, 0x44, 0x40, 0x20,   // t
+    0x00, 0x3C, 0x40, 0x40, 0x20, 0x7C,   // u
+    0x00, 0x1C, 0x20, 0x40, 0x20, 0x1C,   // v
+    0x00, 0x3C, 0x40, 0x30, 0x40, 0x3C,   // w
+    0x00, 0x44, 0x28, 0x10, 0x28, 0x44,   // x
+    0x00, 0x1C, 0xA0, 0xA0, 0xA0, 0x7C,   // y
+    0x00, 0x44, 0x64, 0x54, 0x4C, 0x44,   // z
+    0x00, 0x10, 0x7C, 0x82, 0x00, 0x00,   // {
+    0x00, 0x00, 0xFF, 0x00, 0x00, 0x00,   // |
+    0x00, 0x00, 0x82, 0x7C, 0x10, 0x00,   // }
+    0x00, 0x00, 0x06, 0x09, 0x09, 0x06    // ~
 };
 
-static const int rom_count = sizeof(rom_list) / sizeof(rom_list[0]);
+#define FONT_WIDTH  (font[0])
+#define FONT_HEIGHT (font[1])
+#define FONT_FIRST  (font[2])
+#define FONT_COUNT  (font[3])
 
-void platform_menu_init(void) {
-    state = MENU_STARTUP;
-    startup_frames = 120;
-    current_selection = 0;
+// --Utilities
+static inline void fb_clear(void) {
+    memset(menu_fb, 0, sizeof(menu_fb));
 
     return;
+}
+
+static inline void set_px(int x, int y) {
+    if (((unsigned)x < DISPLAY_WIDTH) && (unsigned)y < DISPLAY_HEIGHT) {
+        menu_fb[y * DISPLAY_WIDTH + x] = 1;
+    }
+
+    return;
+}
+
+static void draw_char(int px, int py, char c) {
+    unsigned char uc = (unsigned char)c;
+    if (uc < FONT_FIRST || uc >= (FONT_FIRST + FONT_COUNT)) {
+        uc = ' ';
+    }
+    unsigned idx = (unsigned)(uc - FONT_FIRST);
+    unsigned base_off = 4u + idx * (unsigned)FONT_WIDTH;
+
+    for (int col = 0; col < (int)FONT_WIDTH; ++col) {
+        uint8_t bits = font[base_off + (unsigned)col];
+
+        for (int row = 0; row < (int)FONT_HEIGHT; ++row) {
+
+            if (bits & 0x01) {
+                set_px(px + col, py + row);
+            }
+
+            bits >>= 1;
+        }
+    }
+
+    return;
+}
+
+static int text_width_px(const char *s, int max_chars) {
+    int n = 0;
+
+    while (*s && n < max_chars) { 
+        ++n; ++s; 
+    }
+
+    return ( n * (int)FONT_WIDTH );
+}
+
+static void draw_text(int x, int y, const char *s, int max_chars) {
+    int i = 0;
+
+    while (*s && i < max_chars) {
+        draw_char(x + i * (int)FONT_WIDTH, y, *s++);
+        ++i;
+    }
+
+    return;
+}
+
+static void to_display_name(const char *path, char *out, int out_cap) {
+    // Extract base name, strip extension, uppercase, replace '_' with SPACE
+    const char *base = path;
+    const char *p = path;
+    const char *dot = 0;
+    int n = 0;
+
+    while (*p) {
+        if (*p == '/' || *p == '\\') base = p + 1;
+        if (*p == '.') dot = p;
+        ++p;
+    }
+    if (!dot || dot <= base) dot = p; // no extension
+
+    // Copy and normalize 
+    for (const char *q = base; q < dot && n < out_cap - 1; ++q) {
+        char c = *q;
+        if (c >= 'a' && c <= 'z') c = (char)(c - 'a' + 'A');
+        if (c == '_') c = ' ';
+        out[n++] = c;
+    }
+
+    out[n] = '\0';
+
+    return;
+}
+
+// --Drawing Helpers--
+
+/* Print two lines: "Leopoldo Mendoza" and "CHIP-8 EMU, 2025" */
+static void draw_startup_banner(void) {
+    const char *l1 = "Leo Mendoza";
+    const char *l2 = "2025";
+    const int max_chars = DISPLAY_WIDTH / (int)FONT_WIDTH;
+
+    int w1 = text_width_px(l1, max_chars);
+    int w2 = text_width_px(l2, max_chars);
+
+    int x1 = (DISPLAY_WIDTH - w1) / 2;
+    int x2 = (DISPLAY_WIDTH - w2) / 2;
+
+    int y = (DISPLAY_HEIGHT - (int)(2*FONT_HEIGHT)) / 2; // Two rows of font height
+
+    draw_text(x1, y, l1, max_chars);
+    draw_text(x2, y + (int)FONT_HEIGHT + 1, l2, max_chars);
+
+    return;
+}
+
+/* List renderer that shows up to VISIBLE_ROWS items */
+static void draw_menu_list(void) {
+    const int VISIBLE_ROWS = (int)(DISPLAY_HEIGHT / (int)FONT_HEIGHT); // 32/8 = 4
+    for (int i = 0; i < VISIBLE_ROWS; ++i) {
+        int idx = screen_index + i;
+        if (idx >= rom_count) break;
+        char name[32];
+        to_display_name(rom_list[idx], name, (int)sizeof(name));
+
+        // leave a column for '>' + one space; clip to fit
+        int max_chars = (DISPLAY_WIDTH / (int)FONT_WIDTH) - 2; // e.g., 10 -> 8
+        int y = i * (int)FONT_HEIGHT;
+
+        if (idx == general_index) {
+            draw_char(0, y, '>');
+        }
+
+        draw_text(2 * (int)FONT_WIDTH, y, name, max_chars);
+    }
+
+    return;
+}
+
+// -- Menu API
+void platform_menu_init(void) {
+    state = MENU_STARTUP;
+    startup_frames = STARTUP_FRAMES;
+    general_index = 0;
+    screen_index  = 0;
+
+    memset(prev_keypad, 0, sizeof(prev_keypad));
+    fb_clear();
+
+    return;
+}
+
+/* Rising edge helper */
+static int pressed_edge(const uint8_t keypad[16], int idx) {
+    int edge = (keypad[idx] && !prev_keypad[idx]);
+    prev_keypad[idx] = keypad[idx];
+
+    if (edge) {
+        click_frames = CLICK_BEEP_FRAMES; 
+    }
+
+    return edge;
 }
 
 MenuState platform_menu_update(Chip8* chip8, const uint8_t keypad[16]) {
@@ -35,41 +301,73 @@ MenuState platform_menu_update(Chip8* chip8, const uint8_t keypad[16]) {
 
             break;
 
-        case MENU_SELECT:
-            // LEFT
-            if (keypad[1]) {
-                current_selection = (current_selection - 1 + rom_count) % rom_count;
+        case MENU_SELECT: {
+            const int VISIBLE_ROWS = (int)(DISPLAY_HEIGHT / (int)FONT_HEIGHT); // 4
+
+            if (pressed_edge(keypad, KEY_UP)) {
+                if (general_index > 0) {
+                    --general_index;
+                    if (general_index < screen_index) {
+                        --screen_index;
+                    }
+                }
             }
 
-            // RIGHT
-            if (keypad[2]) {
-                current_selection = (current_selection + 1) % rom_count;
+            if (pressed_edge(keypad, KEY_DOWN)) {
+                if (general_index < rom_count - 1) {
+                    ++general_index;
+                    if (general_index > screen_index + (VISIBLE_ROWS - 1)) {
+                        ++screen_index;
+                    }
+                }
             }
 
-            // CONFIRM
-            if (keypad[3]) {
-                rom_load_rom(chip8, rom_list[current_selection]);
+            if (pressed_edge(keypad, KEY_OK)) {
+                rom_load_rom(chip8, rom_list[general_index]);
                 state = MENU_IDLE;
             }
 
-            break;
+            if (screen_index < 0) {
+                screen_index = 0;
+            }
+
+            int max_top = rom_count - VISIBLE_ROWS; 
+            
+            if (max_top < 0) {
+                max_top = 0;
+            }
+
+            if (screen_index > max_top) {
+                screen_index = max_top;
+            }
+
+            break; 
+        }
 
         case MENU_IDLE:
-            // Handled in main loop
-
             break;
     }
 
     return state;
 }
 
-void platform_menu_draw(uint16_t *framebuffer) {
-    memset(framebuffer, 0, DISPLAY_SIZE);
+void platform_menu_draw(void) {
+    fb_clear();
 
     if (state == MENU_STARTUP) {
-        // TODO: Draw starup screen 
+        draw_startup_banner();
     } else if (state == MENU_SELECT) {
-        // TODO: Draw name of current ROM selected (hovered over)
+        draw_menu_list();
+    }
+
+    platform_display_draw(menu_fb);
+
+    // Drive a short click sound while timer is active
+    if (click_frames > 0) {
+        platform_sound_update(1);
+        --click_frames;
+    } else {
+        platform_sound_update(0);
     }
 
     return;

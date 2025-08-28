@@ -1,7 +1,14 @@
 #pragma once
 
+#include <stdint.h>
 #include "platform.h"
 #include "chip8.h"
+
+#define STARTUP_FRAMES 180
+#define CLICK_BEEP_FRAMES 3
+#define KEY_UP     1
+#define KEY_DOWN   4
+#define KEY_OK     7
 
 typedef enum {
     MENU_STARTUP,
@@ -11,4 +18,4 @@ typedef enum {
 
 void platform_menu_init(void);
 MenuState platform_menu_update(Chip8* chip8, const uint8_t keypad[16]);
-void platform_menu_draw(uint16_t *framebuffer);
+void platform_menu_draw(void);

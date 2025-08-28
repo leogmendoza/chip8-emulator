@@ -9,22 +9,15 @@
 #include "timers.h"
 #include "timing.h"
 #include "sound.h"
+#include "menu.h"
 
 int main(int argc, char *argv[]) {
     printf("Booting up the Chip-8 Emulator!\n");
 
-    // No ROM path specified
-    if (argc <= 1) {
-        printf("Usage: %s <ROM path>\n", argv[0]);
-
-        return 1;
-    }
-
     Chip8 chip8;
     chip8_init(&chip8);
 
-    rom_load_rom(&chip8, argv[1]);
-
+    // Set up platform subsystems
     if (platform_display_init(DISPLAY_SCALE) != 0) {
         printf("Display could not be initialized");
 
@@ -50,6 +43,47 @@ int main(int argc, char *argv[]) {
     }
 
     int running = 1;
+
+    // ROM path specified (CLI override)
+    if (argc > 1) {
+        rom_load_rom(&chip8, argv[1]);
+    // Pre-ROM loop
+    } else {
+        platform_menu_init();
+
+        while (running) {
+            // Handle window closing gracefully during startup
+            running = platform_display_poll_events();
+
+            if (!running) {
+                break;
+            }
+
+            // Update keypad and feed to the menu
+            platform_input_update(chip8.keypad);
+
+            if (platform_menu_update(&chip8, chip8.keypad) == MENU_IDLE) {
+                break;
+            }
+
+
+            // Draw the menu and keep audio silent
+            platform_menu_draw();
+
+            // Maintain frame pacing (same clock as the emulator)
+            platform_timing_sync(&chip8);
+        }
+
+        if (!running) {
+            // User closed the window from the menu
+            platform_sound_destroy();
+            platform_display_destroy();
+            platform_input_destroy();
+            platform_timing_destroy();
+
+            return 0;
+        }
+    }
 
     while(running) {
         // Handle window closing gracefully
