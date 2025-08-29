@@ -1,6 +1,8 @@
 #pragma once
 
 #include "platform.h"
+
+#include <stddef.h>
 #include "chip8.h"
 
 /* Read memory */

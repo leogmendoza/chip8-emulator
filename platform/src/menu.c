@@ -1,7 +1,5 @@
 #include "menu.h"
 
-#ifdef PLATFORM_PC
-
 #include <string.h>
 #include "chip8.h"
 #include "display.h"
@@ -364,15 +362,14 @@ void platform_menu_draw(void) {
 
     platform_display_draw(menu_fb);
 
+    // TODO: UNCOMMENT
     // Drive a short click sound while timer is active
-    if (click_frames > 0) {
-        platform_sound_update(1);
-        --click_frames;
-    } else {
-        platform_sound_update(0);
-    }
+    // if (click_frames > 0) {
+    //     platform_sound_update(1);
+    //     --click_frames;
+    // } else {
+    //     platform_sound_update(0);
+    // }
 
     return;
 }
-
-#endif

@@ -6,5 +6,5 @@
 #define CPU_CYCLE_DELAY_MS 2
 
 /* Uncomment depending on the platform */
-#define PLATFORM_PC
-// #define PLATFORM_STM32
+// #define PLATFORM_PC
+#define PLATFORM_STM32

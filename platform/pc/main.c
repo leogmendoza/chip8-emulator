@@ -11,6 +11,8 @@
 #include "sound.h"
 #include "menu.h"
 
+#ifdef PLATFORM_PC
+
 int main(int argc, char *argv[]) {
     printf("Booting up the Chip-8 Emulator!\n");
 
@@ -114,3 +116,5 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+#endif

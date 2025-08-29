@@ -5,14 +5,16 @@ project(chip8_emulator)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# Automatically collect all .c files from core/src and platform/pc
+# Automatically collect all .c files from core/src and platform/pc (and platform/src)
 file(GLOB CORE_SOURCES core/src/*.c)
 file(GLOB PLATFORM_SOURCES platform/pc/*.c)
+file(GLOB PLATFORM_SRC_SOURCES platform/src/*.c)
 
 # Add PC-side entry points
 set(SOURCES
     ${CORE_SOURCES}
     ${PLATFORM_SOURCES}
+    ${PLATFORM_SRC_SOURCES}
 )   
 
 add_executable(chip8 ${SOURCES})
