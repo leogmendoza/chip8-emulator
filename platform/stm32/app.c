@@ -23,11 +23,11 @@ int app(void) {
         return 1;
     }
 
-    // if (platform_input_init() != 0) {
-    //     printf("Input could not be initialized");
+    if (platform_input_init() != 0) {
+        printf("Input could not be initialized");
 
-    //     return 1;
-    // }
+        return 1;
+    }
 
     // if (platform_timing_init(CPU_CYCLE_DELAY_MS) != 0) {
     //     printf("Timing could not be initialized");
@@ -55,8 +55,8 @@ int app(void) {
             break;
         }
 
-        // // Update keypad and feed to the menu
-        // platform_input_update(chip8.keypad);
+        // Update keypad and feed to the menu
+        platform_input_update(chip8.keypad);
 
         if (platform_menu_update(&chip8, chip8.keypad) == MENU_IDLE) {
             break;
@@ -73,8 +73,8 @@ int app(void) {
     if (!running) {
         // // User closed the window from the menu
         // platform_sound_destroy();
-        // platform_display_destroy();
-        // platform_input_destroy();
+        platform_display_destroy();
+        platform_input_destroy();
         // platform_timing_destroy();
 
         return 0;
@@ -84,8 +84,8 @@ int app(void) {
         // Handle window closing gracefully
         running = platform_display_poll_events();
 
-        // // Poll for pressed inputs
-        // platform_input_update(chip8.keypad);
+        // Poll for pressed inputs
+        platform_input_update(chip8.keypad);
 
         // Run multiple instructions per frame
         for (size_t i = 0; i < INSTRUCTIONS_PER_FRAME; ++i) {
@@ -104,7 +104,7 @@ int app(void) {
     
     // platform_sound_destroy();
     platform_display_destroy();
-    // platform_input_destroy();
+    platform_input_destroy();
     // platform_timing_destroy();
 
     return 0;

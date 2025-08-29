@@ -4,7 +4,7 @@
 #include "platform.h"
 #include "chip8.h"
 
-#define STARTUP_FRAMES 720
+#define STARTUP_FRAMES 180
 #define CLICK_BEEP_FRAMES 5
 #define KEY_UP     1
 #define KEY_DOWN   4
