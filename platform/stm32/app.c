@@ -35,11 +35,11 @@ int app(void) {
     //     return 1;
     // }
 
-    // if (platform_sound_init() != 0) {
-    //     printf("Sound could not be initialized");
+    if (platform_sound_init() != 0) {
+        printf("Sound could not be initialized");
 
-    //     return 1;
-    // }
+        return 1;
+    }
 
     int running = 1;
 
@@ -72,7 +72,7 @@ int app(void) {
 
     if (!running) {
         // // User closed the window from the menu
-        // platform_sound_destroy();
+        platform_sound_destroy();
         platform_display_destroy();
         platform_input_destroy();
         // platform_timing_destroy();
@@ -95,14 +95,14 @@ int app(void) {
         // Draw once per frame
         platform_display_draw(chip8.display);
 
-        // // Beep while sound timer is activated
-        // platform_sound_update(chip8.sound_timer > 0);
+        // Beep while sound timer is activated
+        platform_sound_update(chip8.sound_timer > 0);
 
         // // Ensure ticking at desired FPS
         // platform_timing_sync(&chip8);
     }
     
-    // platform_sound_destroy();
+    platform_sound_destroy();
     platform_display_destroy();
     platform_input_destroy();
     // platform_timing_destroy();

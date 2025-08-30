@@ -2,8 +2,7 @@
 
 #ifdef PLATFORM_STM32
 
-// TODO: Update with actual binary arrays of ROMs
-
+// -- ROM List --
 const char *rom_list[] = {
     "tetris",
     "space_invaders",
@@ -11,5 +10,8 @@ const char *rom_list[] = {
 };
 
 const int rom_count = (int)(sizeof(rom_list) / sizeof(rom_list[0]));
+
+// -- ROM Hex Byte Arrays -- 
+
 
 #endif

@@ -1,6 +1,5 @@
 #include "display.h"
 
-
 #ifdef PLATFORM_STM32
 
 #include <string.h>
