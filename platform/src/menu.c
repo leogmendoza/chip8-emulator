@@ -8,7 +8,6 @@
 
 static MenuState state;
 static int startup_frames;
-static int current_selection;
 static uint8_t menu_fb[DISPLAY_SIZE];
 static uint8_t prev_keypad[16];  // For rising-edge detection
 static int click_frames = 0;

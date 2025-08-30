@@ -36,31 +36,31 @@ void rom_init(Chip8* chip8) {
 /* Copy font set into reserved section for characters */
 void rom_load_font(Chip8* chip8) {
     for (size_t i = 0; i < FONT_SET_SIZE; ++i) {
-        // TODO: UNCOMMENT -> platform_rom_loader_write_mem(chip8, FONT_SET_START_ADDRESS + i, font_set[i]);
+        platform_rom_loader_write_mem(chip8, FONT_SET_START_ADDRESS + i, font_set[i]);
     }
 }
 
 void rom_load_rom(Chip8* chip8, const char *path) {
 	// Fill a buffer with file contents to read bytes into program memory
 	uint8_t buffer[MAX_ROM_SIZE];
-	// TODO: UNCOMMENT -> int size = platform_rom_loader_load_rom(buffer, sizeof(buffer), path);
+	int size = platform_rom_loader_load_rom(buffer, sizeof(buffer), path);
 
-	// if (size < 0) {
-	// 	printf("ROM source could not be loaded: %s", path);
+	if (size < 0) {
+		printf("ROM source could not be loaded: %s", path);
 
-	// 	return;
-	// }
+		return;
+	}
 
-	// // Prevent writing past memory
-	// if ( (PROGRAM_START_ADDRESS + size) > MEMORY_SIZE) {
-    // 	size = MEMORY_SIZE - PROGRAM_START_ADDRESS;
-	// }
+	// Prevent writing past memory
+	if ( (PROGRAM_START_ADDRESS + size) > MEMORY_SIZE) {
+    	size = MEMORY_SIZE - PROGRAM_START_ADDRESS;
+	}
 
-	// for (long i = 0; i < size; i++) {
-	// 	// TODO: UNCOMMENT -> platform_rom_loader_write_mem(chip8, PROGRAM_START_ADDRESS + i, buffer[i]);
-	// }
+	for (long i = 0; i < size; i++) {
+		platform_rom_loader_write_mem(chip8, PROGRAM_START_ADDRESS + i, buffer[i]);
+	}
 
-	// printf("ROM source successfully loaded: %s (%d bytes)", path, size);
+	printf("ROM source successfully loaded: %s (%d bytes)", path, size);
 
 	return;
 }
