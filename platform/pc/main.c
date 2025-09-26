@@ -16,6 +16,9 @@
 int main(int argc, char *argv[]) {
     printf("Booting up the Chip-8 Emulator!\n");
 
+    int instructions_per_frame = DEFAULT_INSTRUCTIONS_PER_FRAME;
+    int cpu_cycle_delay_ms = DEFAULT_CPU_CYCLE_DELAY_MS;
+
     Chip8 chip8;
     chip8_init(&chip8);
 
@@ -32,7 +35,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    if (platform_timing_init(CPU_CYCLE_DELAY_MS) != 0) {
+    if (platform_timing_init(cpu_cycle_delay_ms) != 0) {
         printf("Timing could not be initialized");
 
         return 1;
@@ -95,7 +98,7 @@ int main(int argc, char *argv[]) {
         platform_input_update(chip8.keypad);
 
         // Run multiple instructions per frame
-        for (size_t i = 0; i < INSTRUCTIONS_PER_FRAME; ++i) {
+        for (size_t i = 0; i < instructions_per_frame; ++i) {
             cpu_cycle(&chip8);
         }
 

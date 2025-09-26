@@ -13,7 +13,7 @@ static uint8_t prev_keypad[16];  // For rising-edge detection
 static int click_frames = 0;
 
 // List navigation indices
-static int general_index = 0;  // selected item
+int general_index = 0;  // selected item
 static int screen_index  = 0;  // top-most item shown
 
 // ROM list from rom_catalog

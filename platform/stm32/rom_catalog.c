@@ -18,6 +18,21 @@ const char *rom_list[] = {
 };
 const int rom_count = (int)(sizeof(rom_list) / sizeof(rom_list[0]));
 
+// -- ROM configs --
+// TODO: Change each ROM's config params when PCB arrives!!!
+const RomConfig rom_configs[] = {
+    { "tetris",         DEFAULT_INSTRUCTIONS_PER_FRAME, DEFAULT_CPU_CYCLE_DELAY_MS },
+    { "space_invaders", DEFAULT_INSTRUCTIONS_PER_FRAME, DEFAULT_CPU_CYCLE_DELAY_MS },
+    { "tic_tac_toe",    30, DEFAULT_CPU_CYCLE_DELAY_MS },
+    { "brix",           15, DEFAULT_CPU_CYCLE_DELAY_MS },
+    { "pong",           15, DEFAULT_CPU_CYCLE_DELAY_MS },
+    { "connect_4",      10, DEFAULT_CPU_CYCLE_DELAY_MS },
+    { "puzzle",         DEFAULT_INSTRUCTIONS_PER_FRAME, DEFAULT_CPU_CYCLE_DELAY_MS },
+    { "blinky",         DEFAULT_INSTRUCTIONS_PER_FRAME, DEFAULT_CPU_CYCLE_DELAY_MS },
+    { "test_opcode",    DEFAULT_INSTRUCTIONS_PER_FRAME, DEFAULT_CPU_CYCLE_DELAY_MS },
+};
+const int rom_config_count = sizeof(rom_configs) / sizeof(rom_configs[0]);
+
 // -- ROM Hex Dumps -- 
 const uint8_t rom_tetris[] = {
   0xa2, 0xb4, 0x23, 0xe6, 0x22, 0xb6, 0x70, 0x01, 0xd0, 0x11, 0x30, 0x25,
