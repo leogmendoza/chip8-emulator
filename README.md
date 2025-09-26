@@ -1,5 +1,4 @@
-Status: DONE PC IMPLEMENTATION WOOOOOOOOOOOOO!!
+Status: Been done STM32 breadboard prototyping for 2 weeks. Finished schematic and PCB design last week. Waiting for JLCPCB and Digikey orders to be shipped, then assembly time!!!
 
-<img width="2560" height="1600" alt="image" src="https://github.com/user-attachments/assets/bfc238e0-9f29-48cd-8a1b-86fef6fa264c" />
-
-<img width="2560" height="1600" alt="image" src="https://github.com/user-attachments/assets/09e7b335-8980-414f-ae11-825bccf2d3c0" />
+Here's the top-level SW architecture for now:
+<img width="741" height="512" alt="chip8_emulator drawio" src="https://github.com/user-attachments/assets/ea8b33ba-7822-43dd-94e9-2b11395fe0bf" />
