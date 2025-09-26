@@ -22,3 +22,24 @@ Release/
 *.cproject
 *.project
 
+# KiCad generated files
+*.kicad_prl        # project local settings (user-specific)
+*.kicad_sch-bak    # schematic backup
+*.kicad_pcb-bak    # PCB backup
+*.tmp              # temporary files
+*.save             # intermediate saves
+*.net              # netlist exports
+*.xml              # BOM exports
+
+# Build cache
+*-backups/
+fp-info-cache
+sym-lib-table-bak
+
+# Output files (for fabrication)
+*.gbr
+*.drl
+*.pos
+*.rpt
+*.zip
+*.csv
