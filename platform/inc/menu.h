@@ -4,7 +4,7 @@
 #include "platform.h"
 #include "chip8.h"
 
-#define STARTUP_FRAMES 60
+#define STARTUP_FRAMES 450  // 60 frames => 1 second in STM32
 #define CLICK_BEEP_FRAMES 5
 #define KEY_UP     1
 #define KEY_DOWN   4
