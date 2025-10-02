@@ -11,6 +11,9 @@
 
 ## Hardware/PCB
 <img src="demo/schematic.png" width="60%">
+<img src="demo/routing.png" width="60%">
+<img src="demo/pcb_front.png" width="60%">
+<img src="demo/pcb_back.png" width="60%">
 
 ## 📸 Demos
 
@@ -30,4 +33,5 @@ TO BE FILLED
 
 ### Opcode Test
 <img src="demo/opcodes.png" width="40%">
+
 
