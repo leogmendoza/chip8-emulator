@@ -10,6 +10,7 @@
 <img src="demo/chip8_emulator.drawio.png" width="60%">
 
 ## Hardware/PCB
+<img src="demo/schematic.png" width="60%">
 
 ## 📸 Demos
 
@@ -29,3 +30,4 @@ TO BE FILLED
 
 ### Opcode Test
 <img src="demo/opcodes.png" width="40%">
+
