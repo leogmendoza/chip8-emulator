@@ -27,7 +27,7 @@
 
 ### Demo Video 
 <a href="https://youtu.be/Bx0_Uua0Y5I">
-  <img src="demo/space_invaders_stm32.png" alt="STM32 Demo" width="400"/>
+  <img src="demo/space_invaders_stm32.jpg" alt="STM32 Demo" width="400"/>
 </a>
 
 ## 📸 PC Demos
@@ -47,6 +47,7 @@
 <img src="demo/opcodes.png" width="40%">
 
 ## Resources
+
 
 
 
