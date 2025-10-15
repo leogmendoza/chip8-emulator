@@ -7,7 +7,7 @@
 ## Features
 
 ## System Diagram
-<img src="demo/chip8_emulator.drawio.png" width="60%">
+<img src="demo/chip8_emulator.drawio.png" width="50%">
 
 ## PCB
 
@@ -15,22 +15,24 @@
 <img src="demo/schematic.png" width="60%">
 
 ### Routing
-<img src="demo/routing.png" width="60%">
+<img src="demo/routing.png" width="40%">
 
 ### Front Render
-<img src="demo/pcb_front.png" width="60%">
+<img src="demo/pcb_front.png" width="40%">
 
 ### Back Render
-<img src="demo/pcb_back.png" width="60%">
+<img src="demo/pcb_back.png" width="40%">
 
-## 📸 Demos
+## 📸 STM32 Demos
 
-### Demo Video - STM32 (click it!)
+### Demo Video 
 <a href="https://youtu.be/Bx0_Uua0Y5I">
   <img src="demo/idk_yet.png" alt="STM32 Demo" width="400"/>
 </a>
 
-### Demo Video - PC (click it!)
+## 📸 PC Demos
+
+### Demo Video 
 <a href="https://youtu.be/zPvpcgly5Rw">
   <img src="demo/space_invaders.png" alt="PC Demo" width="400"/>
 </a>
@@ -43,6 +45,7 @@
 
 ### Opcode Test
 <img src="demo/opcodes.png" width="40%">
+
 
 
 
