@@ -25,14 +25,14 @@
 
 ## 📸 STM32 Demos
 
-### Demo Video 
+### Demo Video (click it!)
 <a href="https://youtu.be/Bx0_Uua0Y5I">
   <img src="demo/space_invaders_stm32.jpg" alt="STM32 Demo" width="400"/>
 </a>
 
 ## 📸 PC Demos
 
-### Demo Video 
+### Demo Video (click it!)
 <a href="https://youtu.be/zPvpcgly5Rw">
   <img src="demo/space_invaders_pc.png" alt="PC Demo" width="400"/>
 </a>
@@ -47,6 +47,7 @@
 <img src="demo/opcodes.png" width="40%">
 
 ## Resources
+
 
 
 
