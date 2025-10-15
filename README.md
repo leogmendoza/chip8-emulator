@@ -25,8 +25,10 @@
 
 ## 📸 Demos
 
-### Demo Video - STM32
-TO BE FILLED
+### Demo Video - STM32 (click it!)
+<a href="https://youtu.be/Bx0_Uua0Y5I">
+  <img src="demo/idk_yet.png" alt="STM32 Demo" width="400"/>
+</a>
 
 ### Demo Video - PC (click it!)
 <a href="https://youtu.be/zPvpcgly5Rw">
@@ -41,6 +43,7 @@ TO BE FILLED
 
 ### Opcode Test
 <img src="demo/opcodes.png" width="40%">
+
 
 
 
