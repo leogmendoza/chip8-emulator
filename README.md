@@ -9,18 +9,26 @@
 ## System Diagram
 <img src="demo/chip8_emulator.drawio.png" width="60%">
 
-## Hardware/PCB
+## PCB
+
+### Schematic
 <img src="demo/schematic.png" width="60%">
+
+### Routing
 <img src="demo/routing.png" width="60%">
+
+### Front Render
 <img src="demo/pcb_front.png" width="60%">
+
+### Back Render
 <img src="demo/pcb_back.png" width="60%">
 
 ## 📸 Demos
 
-### STM32 Demo Video
+### Demo Video - STM32
 TO BE FILLED
 
-### PC Demo Video
+### Demo Video - PC (click it!)
 <a href="https://youtu.be/zPvpcgly5Rw">
   <img src="demo/space_invaders.png" alt="PC Demo" width="400"/>
 </a>
@@ -33,5 +41,6 @@ TO BE FILLED
 
 ### Opcode Test
 <img src="demo/opcodes.png" width="40%">
+
 
 
