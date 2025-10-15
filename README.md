@@ -27,14 +27,14 @@
 
 ### Demo Video 
 <a href="https://youtu.be/Bx0_Uua0Y5I">
-  <img src="demo/idk_yet.png" alt="STM32 Demo" width="400"/>
+  <img src="demo/space_invaders_stm32.png" alt="STM32 Demo" width="400"/>
 </a>
 
 ## 📸 PC Demos
 
 ### Demo Video 
 <a href="https://youtu.be/zPvpcgly5Rw">
-  <img src="demo/space_invaders.png" alt="PC Demo" width="400"/>
+  <img src="demo/space_invaders_pc.png" alt="PC Demo" width="400"/>
 </a>
 
 ### Startup Screen
@@ -45,6 +45,9 @@
 
 ### Opcode Test
 <img src="demo/opcodes.png" width="40%">
+
+## Resources
+
 
 
 
